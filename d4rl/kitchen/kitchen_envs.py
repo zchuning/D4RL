@@ -86,11 +86,6 @@ class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
             done = not self.tasks_to_complete
         return obs, reward, done, env_info
 
-    def render(self, mode='human'):
-        # Disable rendering to speed up environment evaluation.
-        return []
-
-
 class KitchenMicrowaveKettleLightSliderV0(KitchenBase):
     TASK_ELEMENTS = ['microwave', 'kettle', 'light switch', 'slide cabinet']
 
