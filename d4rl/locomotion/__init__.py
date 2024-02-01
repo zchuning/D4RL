@@ -426,7 +426,7 @@ register(
 register(
     id='antmaze-obstacle-v2',
     entry_point='d4rl.locomotion.ant:make_ant_maze_env',
-    max_episode_steps=1000,
+    max_episode_steps=200,
     kwargs={
         'maze_map': maze_env.OBSTACLE_MAZE_TEST,
         'reward_type':'sparse',

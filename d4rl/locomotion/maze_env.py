@@ -53,11 +53,11 @@ HARDEST_MAZE = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
                 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
 
 OBSTACLE_MAZE = [[1, 1, 1, 1, 1, 1, 1],
-                 [1, 0, 0, R, 0, 0, 1],
-                 [1, 0, 0, 0, 0, 0, 1],
+                 [1, R, 0, 0, 0, G, 1],
                  [1, 0, 1, 1, 1, 0, 1],
-                 [1, 0, 0, 0, 0, 0, 1],
-                 [1, 0, 0, G, 0, 0, 1],
+                 [1, 0, 1, 1, 1, 0, 1],
+                 [1, 0, 1, 1, 1, 0, 1],
+                 [1, G, 0, 0, 0, G, 1],
                  [1, 1, 1, 1, 1, 1, 1]]
 
 # Maze specifications with a single target goal
@@ -87,11 +87,11 @@ HARDEST_MAZE_TEST = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
                     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
 
 OBSTACLE_MAZE_TEST = [[1, 1, 1, 1, 1, 1, 1],
-                      [1, 0, 0, R, 0, 0, 1],
-                      [1, 0, 0, 0, 0, 0, 1],
+                      [1, R, 0, 0, 0, 0, 1],
                       [1, 0, 1, 1, 1, 0, 1],
-                      [1, 0, 0, 0, 0, 0, 1],
-                      [1, 0, 0, G, 0, 0, 1],
+                      [1, 0, 1, 1, 1, 0, 1],
+                      [1, 0, 1, 1, 1, 0, 1],
+                      [1, 0, 0, 0, 0, G, 1],
                       [1, 1, 1, 1, 1, 1, 1]]
 
 # Maze specifications for evaluation
@@ -228,10 +228,14 @@ class MazeEnv(gym.Env):
             int(1 + (xy[0]) / size_scaling))
   
   def _get_reset_location(self,):
-    prob = (1.0 - self._np_maze_map) / np.sum(1.0 - self._np_maze_map) 
-    prob_row = np.sum(prob, 1)
-    row_sample = np.random.choice(np.arange(self._np_maze_map.shape[0]), p=prob_row)
-    col_sample = np.random.choice(np.arange(self._np_maze_map.shape[1]), p=prob[row_sample] * 1.0 / prob_row[row_sample])
+    prob = (1.0 - self._np_maze_map) / np.sum(1.0 - self._np_maze_map)
+    prob = prob.flatten()
+    rowcol_sample = np.random.choice(np.arange(len(prob)), p=prob)
+    row_sample = rowcol_sample // self._np_maze_map.shape[1]
+    col_sample = rowcol_sample % self._np_maze_map.shape[1]
+    # prob_row = np.sum(prob, 1)
+    # row_sample = np.random.choice(np.arange(self._np_maze_map.shape[0]), p=prob_row)
+    # col_sample = np.random.choice(np.arange(self._np_maze_map.shape[1]), p=prob[row_sample] * 1.0 / prob_row[row_sample])
     reset_location = self._rowcol_to_xy((row_sample, col_sample))
     
     # Add some random noise
